@@ -5,21 +5,36 @@ class ARMonoview: UIView, ARSCNViewDelegate {
     var arview: ARSCNView?
     var _preview:Bool = true
     var cachedPreview: Any?
+    var _npgc:UIColor?
+    @objc var noPreviewBackgroundColor: UIColor? {
+        get {
+            return _npgc
+        }
+        set(newVal) {
+            _npgc = newVal
+            setBackgroundContents()
+        }
+    }
     @objc var preview:Bool {
         get {
             return _preview
         }
         set(newVal) {
-            if cachedPreview == nil {
-                cachedPreview = arview?.scene.background.contents
-            }
             _preview = newVal
-            if(_preview) {
-                arview?.scene.background.contents = cachedPreview
-                
-            } else {
-                arview?.scene.background.contents = UIColor.black
-            }
+            setBackgroundContents()
+        }
+    }
+    func setBackgroundContents(){
+        if cachedPreview == nil {
+            cachedPreview = arview?.scene.background.contents
+        }
+        
+        if(_preview) {
+            arview?.scene.background.contents = cachedPreview
+            
+        } else {
+            let color = noPreviewBackgroundColor ?? UIColor.black
+            arview?.scene.background.contents = color
         }
     }
     func start() -> ARMonoview {
